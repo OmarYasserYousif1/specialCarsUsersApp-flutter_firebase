@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "389684649868",
+    "project_id": "flutter-uber-clone-with-16ccf",
+    "storage_bucket": "flutter-uber-clone-with-16ccf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:389684649868:android:845ed0898baa0b2a3040a9",
+        "android_client_info": {
+          "package_name": "com.eveyadem.usersapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxevwjA9FGdoBGXE4sm3o2wCj9H3Y-Wbw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
