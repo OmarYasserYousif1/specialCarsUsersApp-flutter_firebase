@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -24,13 +23,13 @@ import 'package:users_app/models/direction_details.dart';
 import 'package:users_app/models/online_nearby_drivers.dart';
 import 'package:users_app/pages/about_page.dart';
 import 'package:users_app/pages/search_destination_page.dart';
+import 'package:users_app/pages/services_page.dart';
 import 'package:users_app/pages/trips_history_page.dart';
 import 'package:users_app/widgets/info_dialog.dart';
 import 'package:users_app/widgets/payment_dialog.dart';
-
 import '../appInfo/app_info.dart';
 import '../widgets/loading_dialog.dart';
-
+import '../pages/book_course.dart';
 
 class HomePage extends StatefulWidget
 {
@@ -39,7 +38,6 @@ class HomePage extends StatefulWidget
   @override
   State<HomePage> createState() => _HomePageState();
 }
-
 
 
 class _HomePageState extends State<HomePage>
@@ -621,7 +619,7 @@ class _HomePageState extends State<HomePage>
       }
 
       setState(() {
-        tripStatusDisplay = "Driving to DropOff Location - ${directionDetailsPickup.durationTextString}";
+        tripStatusDisplay = "To DropOff Location - ${directionDetailsPickup.durationTextString}";
       });
 
       requestingDirectionDetailsInfo = false;
@@ -979,7 +977,12 @@ class _HomePageState extends State<HomePage>
                   ),
 
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) =>  ServicesPage()),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey,
                         shape: const CircleBorder(),
@@ -1081,8 +1084,8 @@ class _HomePageState extends State<HomePage>
                                     },
                                     child: Image.asset(
                                       "assets/images/uberexec.png",
-                                      height: 122,
-                                      width: 122,
+                                      height: 115,
+                                      width: 115,
                                     ),
                                   ),
 
@@ -1094,7 +1097,6 @@ class _HomePageState extends State<HomePage>
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-
                                 ],
                               ),
                             ),
@@ -1102,7 +1104,6 @@ class _HomePageState extends State<HomePage>
                         ),
                       ),
                     ),
-
                   ],
                 ),
               ),
@@ -1172,7 +1173,6 @@ class _HomePageState extends State<HomePage>
                         ),
                       ),
                     ),
-
                   ],
                 ),
               ),
@@ -1283,7 +1283,7 @@ class _HomePageState extends State<HomePage>
                         GestureDetector(
                           onTap: ()
                           {
-                            launchUrl(Uri.parse("tel://$phoneNumberDriver"));
+                            launchUrl(Uri.parse("tel:$phoneNumberDriver"));
                           },
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -1312,10 +1312,8 @@ class _HomePageState extends State<HomePage>
                             ],
                           ),
                         ),
-
                       ],
                     ),
-
                   ],
                 ),
               ),

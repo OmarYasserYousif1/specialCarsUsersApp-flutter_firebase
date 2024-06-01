@@ -58,7 +58,7 @@ class _PaymentDialogState extends State<PaymentDialog>
             const SizedBox(height: 16,),
 
             Text(
-              "\$" + widget.fareAmount,
+              "\EGP" + widget.fareAmount,
               style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 36,
