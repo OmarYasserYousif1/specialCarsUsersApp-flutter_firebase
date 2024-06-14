@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:users_app/models/car_model.dart';
 
 class CarDetailsPage extends StatefulWidget {
   final Car car;
@@ -11,49 +11,78 @@ class CarDetailsPage extends StatefulWidget {
 }
 
 class _CarDetailsPageState extends State<CarDetailsPage> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _daysController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _licenseController = TextEditingController();
-  final ValueNotifier<double> _totalPriceNotifier = ValueNotifier<double>(0.0);
+  final TextEditingController _drivingLicenseController = TextEditingController();
+  final TextEditingController _numberOfDaysController = TextEditingController();
+  double _totalPrice = 0.0;
 
-  @override
-  void initState() {
-    super.initState();
-    _daysController.addListener(_calculateTotalPrice);
-    _firstNameController.addListener(_clearErrorMessages);
-    _lastNameController.addListener(_clearErrorMessages);
-    _addressController.addListener(_clearErrorMessages);
-    _licenseController.addListener(_clearErrorMessages);
+  void _updateTotalPrice() {
+    int numberOfDays = int.tryParse(_numberOfDaysController.text) ?? 0;
+    setState(() {
+      _totalPrice = numberOfDays * widget.car.pricePerDay.toDouble();
+    });
   }
 
   @override
   void dispose() {
-    _daysController.removeListener(_calculateTotalPrice);
-    _daysController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
     _addressController.dispose();
-    _licenseController.dispose();
-    _totalPriceNotifier.dispose();
+    _drivingLicenseController.dispose();
+    _numberOfDaysController.dispose();
     super.dispose();
   }
 
-  void _calculateTotalPrice() {
-    final int? days = int.tryParse(_daysController.text);
-    if (days != null && days > 0) {
-      _totalPriceNotifier.value = days * widget.car.pricePerDay.toDouble();
-    } else {
-      _totalPriceNotifier.value = 0.0;
-    }
-  }
-
-  void _clearErrorMessages() {
-    if (_formKey.currentState != null) {
-      _formKey.currentState!.validate();
-    }
+  void _showDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Container(
+            color: Colors.pink[900],
+            padding: EdgeInsets.all(8.0),
+            child: Center(
+              child: Text(
+                'We care about you',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Car Name: ${widget.car.name}'),
+                Text('Model: ${widget.car.model}'),
+                Text('Price per day: L.E ${widget.car.pricePerDay}'),
+                Text('First Name: ${_firstNameController.text}'),
+                Text('Last Name: ${_lastNameController.text}'),
+                Text('Address: ${_addressController.text}'),
+                Text('Driving License Number: ${_drivingLicenseController.text}'),
+                Text('Number of Days: ${_numberOfDaysController.text}'),
+                Text('Total Price: L.E $_totalPrice'),
+              ],
+            ),
+          ),
+          actions: [
+            Container(
+              color: Colors.pink[900],
+              padding: EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(
+                  'One of our representatives will contact you ASAP to complete the procedures to receive the car.',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -64,153 +93,105 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.network(widget.car.imageUrl),
-            SizedBox(height: 16),
-            Text(
-              widget.car.name,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Model: ${widget.car.model}',
-              style: TextStyle(fontSize: 18),
-            ),
-            Text(
-              'Price per day: L.E ${widget.car.pricePerDay}',
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 24),
-            Text(
-              'Fill in your details to rent this car:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            Form(
-              key: _formKey,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: _firstNameController,
-                    decoration: InputDecoration(
-                      labelText: 'First Name',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your first name';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _lastNameController,
-                    decoration: InputDecoration(
-                      labelText: 'Last Name',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your last name';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _addressController,
-                    decoration: InputDecoration(
-                      labelText: 'Address',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your address';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _licenseController,
-                    decoration: InputDecoration(
-                      labelText: 'Driving License Number',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your driving license number';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _daysController,
-                    decoration: InputDecoration(
-                      labelText: 'Number of Days',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the number of days';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  ValueListenableBuilder<double>(
-                    valueListenable: _totalPriceNotifier,
-                    builder: (context, totalPrice, child) {
-                      return TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Total Price',
-                          border: OutlineInputBorder(),
-                        ),
-                        readOnly: true,
-                        controller: TextEditingController(
-                          text: 'L.E $totalPrice',
-                        ),
-                      );
-                    },
-                  ),
-                  SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        // Process data
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Processing Data')),
-                        );
-                      }
-                    },
-                    child: Text('Submit'),
-                  ),
-                ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.network(widget.car.imageUrl),
+              SizedBox(height: 16),
+              Text(
+                widget.car.name,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-            ),
-          ],
+              SizedBox(height: 8),
+              Text(
+                'Model: ${widget.car.model}',
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Price per day: L.E ${widget.car.pricePerDay}',
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 16),
+              TextFormField(
+                controller: _firstNameController,
+                decoration: InputDecoration(labelText: 'First Name'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your first name';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _lastNameController,
+                decoration: InputDecoration(labelText: 'Last Name'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your last name';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _addressController,
+                decoration: InputDecoration(labelText: 'Address'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your address';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _drivingLicenseController,
+                decoration: InputDecoration(labelText: 'Driving License Number'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your driving license number';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _numberOfDaysController,
+                decoration: InputDecoration(labelText: 'Number of Days'),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the number of days';
+                  }
+                  if (int.tryParse(value) == null) {
+                    return 'Please enter a valid number';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  _updateTotalPrice();
+                },
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Total Price: L.E $_totalPrice',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 16),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      _showDialog();
+                    }
+                  },
+                  child: Text('Submit'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-}
-
-class Car {
-  final String name;
-  final String model;
-  final int pricePerDay;
-  final String imageUrl;
-
-  Car({
-    required this.name,
-    required this.model,
-    required this.pricePerDay,
-    required this.imageUrl,
-  });
 }

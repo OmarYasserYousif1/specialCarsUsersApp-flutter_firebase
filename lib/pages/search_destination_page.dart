@@ -29,6 +29,7 @@ class _SearchDestinationPageState extends State<SearchDestinationPage>
     {
       String apiPlacesUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$locationName&key=$googleMapKey&components=country:eg";
 
+
       var responseFromPlacesAPI = await CommonMethods.sendRequestToAPI(apiPlacesUrl);
 
       if(responseFromPlacesAPI == "error")
